@@ -1578,7 +1578,30 @@ namespace NHibernate.Impl
 
 			// NH different implementation: Hibernate here ignore EmptyInterceptor.Instance too, resulting
 			// in the "NoInterceptor" being unable to override a session factory interceptor.
-			public virtual IInterceptor SessionInterceptor => _interceptor ?? _sessionFactory.Interceptor;
+			public virtual IInterceptor SessionInterceptor
+			{
+				get
+				{
+					if (_interceptor != null && _sessionFactory.Interceptor != null)
+					{
+						if (_sessionFactory.Interceptor is CompositeInterceptor compositeInterceptor1)
+						{
+							compositeInterceptor1.AddInterceptor(_interceptor);
+							return _sessionFactory.Interceptor;
+						}
+
+						if (_interceptor is CompositeInterceptor compositeInterceptor2)
+						{
+							compositeInterceptor2.InsertInterceptor(0, _sessionFactory.Interceptor);
+							return _interceptor;
+						}
+
+						return new CompositeInterceptor(_sessionFactory.Interceptor, _interceptor);
+					}
+
+					return _interceptor ?? _sessionFactory.Interceptor;
+				}
+			}
 
 			public virtual ConnectionReleaseMode SessionConnectionReleaseMode => _connectionReleaseMode;
 
