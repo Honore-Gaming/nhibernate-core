@@ -1584,19 +1584,19 @@ namespace NHibernate.Impl
 				{
 					if (_interceptor != null && _sessionFactory.Interceptor != null)
 					{
-						if (_sessionFactory.Interceptor is CompositeInterceptor compositeInterceptor1)
+						if (_sessionFactory.Interceptor is AggregatorInterceptor aggregatorInterceptor1)
 						{
-							compositeInterceptor1.AddInterceptor(_interceptor);
+							aggregatorInterceptor1.AddInterceptor(_interceptor);
 							return _sessionFactory.Interceptor;
 						}
 
-						if (_interceptor is CompositeInterceptor compositeInterceptor2)
+						if (_interceptor is AggregatorInterceptor aggregatorInterceptor2)
 						{
-							compositeInterceptor2.InsertInterceptor(0, _sessionFactory.Interceptor);
+							aggregatorInterceptor2.InsertInterceptor(0, _sessionFactory.Interceptor);
 							return _interceptor;
 						}
 
-						return new CompositeInterceptor(_sessionFactory.Interceptor, _interceptor);
+						return new AggregatorInterceptor(_sessionFactory.Interceptor, _interceptor);
 					}
 
 					return _interceptor ?? _sessionFactory.Interceptor;
